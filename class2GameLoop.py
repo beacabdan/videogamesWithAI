@@ -78,6 +78,25 @@ import pygame
 # pygame.quit()
 # quit()
 
+""" CAMBIO DE COLOR CON INPUTS """
+# pygame.init()
+# gameDisplay = pygame.display.set_mode( (200, 200) )
+#
+# sigue_jugando = True
+# while sigue_jugando:
+#     for evento in pygame.event.get():
+#         if evento.type == pygame.QUIT:
+#             sigue_jugando = False
+#         elif evento.type == pygame.MOUSEBUTTONUP:
+#             gameDisplay.fill( (0, 255, 0) )
+#         else:
+#             gameDisplay.fill( (255, 0, 0 ) )
+#
+#     pygame.display.update()
+#
+# pygame.quit()
+# quit()
+
 """ CON LOOP ACABADO POR INPUT E IMPRIMIENDO CLICKS """
 pygame.init()
 gameDisplay = pygame.display.set_mode((200, 200))
