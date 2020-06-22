@@ -85,6 +85,23 @@ def comprueba_ganador(tablero):
     return False
 
 
+# retorna true si hay al menos un sitio libre en el tablero (se puede jugar)
+def comprueba_sitios_libres(tablero):
+    sitios_libres = False
+    for fila in tablero:
+        for posicion in fila:
+            if posicion == 0:
+                return True
+    return False
+
+
+# gestiona los cambios de turno
+def cambio_turno(jugador):
+    if jugador == 1:
+        return 2
+    return 1
+
+
 """ PROGRAMA """
 
 tablero = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  # crea tablero vacío
@@ -106,19 +123,12 @@ while not hay_ganador and sitios_libres:
     tablero[x][y] = jugador  # pon la ficha donde el jugador haya escogido
     hay_ganador = comprueba_ganador(tablero)  # comprueba si ha ganador
 
+    # comprueba sitios libres
+    sitios_libres = comprueba_sitios_libres(tablero)
+
     # cambio de jugador/turno
     if not hay_ganador:
-        # comprueba si hay sitios libres
-        sitios_libres = False
-        for fila in tablero:
-            for posicion in fila:
-                if posicion == 0:
-                    sitios_libres = True
-
-        if jugador == 1:
-            jugador = 2
-        else:
-            jugador = 1
+        jugador = cambio_turno(jugador)
 
     # dibuja el tablero con la nueva ficha
     dibuja_tablero(tablero)
