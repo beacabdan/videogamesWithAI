@@ -43,6 +43,25 @@ def pregunta_posición(tablero):
     return x, y
 
 
+# escoge una posición usando una estrategia (mala), ¿cómo la mejoraríamos?
+def escoge_posición_ai_simple(tablero):
+    x = -1
+    y = -1
+    posición_ocupada = True
+    # mientras no haya escogido una posición válida, sigue preguntando
+    while posición_ocupada:
+        x = randint(0, 2)
+        y = randint(0, 2)
+
+        # mira si la posición está vacía: no puede fallar por el índice -> no hace falta el try except
+        if tablero[x][y] == 0:
+            posición_ocupada = False
+        else:
+            print("Esa posición ya está ocupada")
+    # cuando haya una posición válida, return
+    return x, y
+
+
 # comprueba las filas, las columnas y las diagonales
 def comprueba_ganador(tablero):
     for row in tablero:
@@ -71,27 +90,41 @@ def comprueba_ganador(tablero):
 tablero = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  # crea tablero vacío
 dibuja_tablero(tablero)
 
-jugador = randint(1, 2)  # decidimos aleatoriamente quién empieza a jugar
+jugador = 1  # siempre empieza a jugar el humano
 hay_ganador = False  # al principio, aún no ha ganado nadie
-print("¡Empieza el juego! Te toca, jugador", jugador)
+sitios_libres = True
 
 # mientras no haya ganador = mientras siga el juego
-while not hay_ganador:
-    x, y = pregunta_posición(tablero)  # pide posición al usuario
+while not hay_ganador and sitios_libres:
+    if jugador == 1:
+        print("¡Jugamos! Te toca, jugador", jugador)
+        x, y = pregunta_posición(tablero)  # pide posición al usuario
+    else:
+        x, y = escoge_posición_ai_simple(tablero)  # pide posición a la IA
+        print("La IA ha escogido aleatoriamente la posición x:" + str(x), "y:" + str(y))
+
     tablero[x][y] = jugador  # pon la ficha donde el jugador haya escogido
     hay_ganador = comprueba_ganador(tablero)  # comprueba si ha ganador
 
     # cambio de jugador/turno
     if not hay_ganador:
+        # comprueba si hay sitios libres
+        sitios_libres = False
+        for fila in tablero:
+            for posicion in fila:
+                if posicion == 0:
+                    sitios_libres = True
+
         if jugador == 1:
             jugador = 2
         else:
             jugador = 1
-        print("¡Seguimos jugando! Te toca, jugador", jugador)
 
     # dibuja el tablero con la nueva ficha
     dibuja_tablero(tablero)
-    print("¡Seguimos jugando! Te toca, jugador", jugador)
 
-# di quién ha ganado
-print("El jugador", jugador, "ha ganado la partida.")
+# di algo al final
+if hay_ganador:
+    print("El jugador", jugador, "ha ganado la partida.")
+elif not sitios_libres:
+    print("Os habéis quedado sin casillas libres, no ha ganado nadie.")
