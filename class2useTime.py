@@ -16,6 +16,7 @@ while True:
     gameDisplay.blit(hand, (300, 300))
 
     gameDisplay.blit(hand, (int(175+100*math.sin(time)), int(175+100*math.cos(0.5*time))))
+    print(time)
     pygame.display.update()
 
 pygame.quit()

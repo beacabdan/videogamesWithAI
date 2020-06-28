@@ -11,7 +11,8 @@ objetivo_pos = [0, 0]  # TODO: random xy food position (first value is fila, sec
 # TODO: pon un 2 en xy del objetivo usando tablero[fila objetivo][columna objetivo] (un 2 representa al objetivo)
 
 # START OF GAME LOOP
-while puntuacion < 100:
+while True:
+    print("Sigue el juego!")
     # UPDATE SCENE
     # random walk, movimiento 50% del tiempo vertical, 50% horizontal
     # TODO: pon un 0 en la posición actual del jugador (el player desaparece de donde estaba)
