@@ -65,9 +65,6 @@ while continue_playing:
         # TODO: suma uno a la puntuación
 
     # DRAW SCENE
-    gameDisplay.fill( (255, 255, 255) )
-
-    # dibuja una cuadrícula numerada
     gameDisplay.fill(colours.darkgrey)
     for row in range(len(tablero)):
         for column in range(len(tablero[row])):

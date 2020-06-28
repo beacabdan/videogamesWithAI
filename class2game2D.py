@@ -18,7 +18,7 @@ for i in range(height):
 
 # generate a random position for the player and the food and place both in the 2d board
 player_pos = [0, 0]  # TODO: random xy player position (first value is fila, second is column)
-objetivo_pos = [0, 0]  # TODO: random xy food position (first value is fila, second is column)
+objetivo_pos = [0, 0]  # TODO: random xy objetivo position (first value is fila, second is column)
 # TODO: pon un 1 en xy del jugador usando tablero[fila jugador][columna jugador] (un 1 representa al jugador)
 # TODO: pon un 2 en xy del objetivo usando tablero[fila objetivo][columna objetivo] (un 2 representa al objetivo)
 puntuacion = 0
