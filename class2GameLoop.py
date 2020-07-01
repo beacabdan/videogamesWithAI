@@ -98,6 +98,7 @@ import pygame
 # quit()
 
 """ CON LOOP ACABADO POR INPUT E IMPRIMIENDO CLICKS """
+
 pygame.init()
 gameDisplay = pygame.display.set_mode((200, 200))
 
@@ -108,7 +109,7 @@ while sigue_jugando:
             sigue_jugando = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             print(event)
-    gameDisplay.fill((0, 255, 0))
+    gameDisplay.fill((255, 0, 0))
     pygame.display.update()
 
 pygame.quit()

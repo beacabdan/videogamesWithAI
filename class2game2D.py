@@ -17,35 +17,40 @@ for i in range(height):
     tablero.append(row)
 
 # generate a random position for the player and the food and place both in the 2d board
-player_pos = [0, 0]  # TODO: random xy player position (first value is fila, second is column)
-objetivo_pos = [0, 0]  # TODO: random xy objetivo position (first value is fila, second is column)
-# TODO: pon un 1 en xy del jugador usando tablero[fila jugador][columna jugador] (un 1 representa al jugador)
-# TODO: pon un 2 en xy del objetivo usando tablero[fila objetivo][columna objetivo] (un 2 representa al objetivo)
+player_pos = [randint(0, height-1), randint(0, width-1)]
+objetivo_pos = [randint(0, height-1), randint(0, width-1)]
+tablero[objetivo_pos[0]][objetivo_pos[1]] = 2
+tablero[player_pos[0]][player_pos[1]] = 1
 puntuacion = 0
 
 continue_playing = True
 while continue_playing:
     # GET USER INPUT
     for evento in pygame.event.get():
-        # TODO: si evento es quit, saldremos del bucle principal en la siguiente iteración
-        if evento.type == pygame.KEYDOWN:
+        if evento.type == pygame.QUIT:
+            continue_playing = False  # saldremos del bucle principal en la siguiente iteración
+        elif evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_LEFT:
                 player_pos[1] -= 1  # mueve izquerda (x decrece)
-            # TODO: si flecha derecha, mueve hacia derecha (x augmenta)
-            # TODO: si flecha arriba, mueve hacia arriba (y decrece)
-            # TODO: si flecha abajo, mueve abajo (y augmenta)
+            elif evento.key == pygame.K_RIGHT:
+                player_pos[1] += 1  # mueve derecha (x augmenta)
+            elif evento.key == pygame.K_UP:
+                player_pos[0] -= 1  # mueve arriba (y decrece)
+            elif evento.key == pygame.K_DOWN:
+                player_pos[0] += 1  # muebe abajo (y augmenta)
             player_pos[0] = max(0, min(player_pos[0], height - 1))  # nos aseguramos de que esté dentro del rango (vert)
             player_pos[1] = max(0, min(player_pos[1], width - 1))  # nos aseguramos de que esté dentro del rango (horz)
 
     # UPDATE SCENE
     # si player llega al objetivo, genera un nuevo objetivo
     if player_pos == objetivo_pos:
-        objetivo_pos = [0, 0]  # TODO: random xy food position (first value is the row, second is column)
-        # TODO: pon un 2 en xy del objetivo con tablero[fila objetivo][columna objetivo] (un 2 representa al objetivo)
-        # TODO: suma uno a la puntuación
+        objetivo_pos = [randint(0, height - 1), randint(0, width - 1)]  #posición xy aleatoria
+        puntuacion += 1  # sumarle 1 a la puntuación
+        print("Score:", puntuacion)
 
     # DRAW SCENE
-    # TODO: pon el fondo (gameDisplay) blanco
+    gameDisplay.fill( (255, 255, 255) )
+
     # dibuja una cuadrícula numerada
     for j in range(1, len(tablero) + 1):
         pygame.draw.line(gameDisplay, colours.black, (0, int(config.display_height / height * j)),
@@ -60,13 +65,12 @@ while continue_playing:
             TextRect = TextSurf.get_rect()
             TextRect.center = (int((i+0.5)*config.display_width/width), int((j+0.5)*config.display_height/height))
             gameDisplay.blit(TextSurf, TextRect)
-    # TODO: dibuja un círculo en la posición del jugador
-    # TODO: dibuja un círculo de otro color en la posición del objetivo
-    # TODO: muestra la puntuación por pantalla
+    pygame.draw.circle(gameDisplay, colours.red, (int(config.display_width / width * (player_pos[1] + 0.5)), int(config.display_width / height * (player_pos[0] + 0.5))), 10)
+    pygame.draw.circle(gameDisplay, colours.green, (int(config.display_width / width * (objetivo_pos[1] + 0.5)), int(config.display_width / height * (objetivo_pos[0] + 0.5))), 15)
 
     # UPDATE DISPLAY AND INCREASE TIME
     pygame.display.update()
-    pygame.time.delay(200)  # para que vaya más lenta
+    pygame.time.delay(200)
 
 
 pygame.quit()
