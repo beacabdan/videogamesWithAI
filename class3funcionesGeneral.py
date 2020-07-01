@@ -9,7 +9,7 @@ import random
 def carga_tablero():
     # instead of creating a board, we load it from a file
     tablero = []
-    with open('assets/mymap.csv') as csvfile:
+    with open('assets/mymap1.csv') as csvfile:
         counter = 0
         reader = csv.reader(csvfile)
         for row in reader:
@@ -39,6 +39,13 @@ def carga_tablero():
 
     return tablero, tile_table
 
+def escribe_texto(texto, x, y, size = 20):
+    largeText = pygame.font.Font('assets/Roboto-Regular.ttf', size)
+    TextSurf = largeText.render(texto, True, colours.white)
+    TextRect = TextSurf.get_rect()
+    TextRect.center = (x, y)
+    gameDisplay.blit(TextSurf, TextRect)
+
 def dibuja_tablero():
     gameDisplay.fill(colours.darkgrey)
     for row in range(len(tablero)):
@@ -48,34 +55,50 @@ def dibuja_tablero():
             tile = pygame.transform.scale(tile_table[tile_x][tile_y], (tile_size, tile_size))
             gameDisplay.blit(tile, (column * tile_size, row * tile_size))
 
+
+
 def dibuja_jugador():
     gameDisplay.blit(config.handImg, (config.display_width / width * player_pos[1],
                                       config.display_height / height * player_pos[
                                           0]))  # pon un sprite en la posición del jugador
 
-def escribe_texto(texto, x, y):
-    largeText = pygame.font.Font('assets/Roboto-Regular.ttf', 25)
-    TextSurf = largeText.render(texto, True, colours.white)
-    TextRect = TextSurf.get_rect()
-    TextRect.center = (x, y)
-    gameDisplay.blit(TextSurf, TextRect)
-
 def mueve_player():
+    steppable_tiles = [18, 16, 3, 35, 70, 92, 69]
+
+    deltax = 0
+    deltay = 0
+
     if evento.key == pygame.K_LEFT:
-        player_pos[1] -= 1  # mueve izquerda (x decrece)
+        deltay = -1  # mueve izquerda (x decrece)
     elif evento.key == pygame.K_RIGHT:
-        player_pos[1] += 1  # mueve derecha (x augmenta)
+        deltay = 1  # mueve derecha (x augmenta)
     elif evento.key == pygame.K_UP:
-        player_pos[0] -= 1  # mueve arriba (y decrece)
+        deltax = -1  # mueve arriba (y decrece)
     elif evento.key == pygame.K_DOWN:
-        player_pos[0] += 1  # muebe abajo (y augmenta)
-    player_pos[0] = max(0, min(player_pos[0], height - 1))  # nos aseguramos de que esté dentro del rango (vert)
-    player_pos[1] = max(0, min(player_pos[1], width - 1))  # nos aseguramos de que esté dentro del rango (horz)
+        deltax = 1  # muebe abajo (y augmenta)
+
+    x = player_pos[0]
+    y = player_pos[1]
+    print(player_pos, "antes", tablero[x][y])
+
+    try:
+        if tablero[x + deltax][y + deltay] in steppable_tiles:
+            player_pos[0] += deltax
+            player_pos[1] += deltay
+    except:
+        return
 
 def ia_algo():
     print("Hola")
 
+def recoge_espada():
+    print("Hace algo con la espada")
+
+def muestra_logo_y_nombre():
+    return None
+
 """PROGRAMA"""
+
 
 pygame.init()
 gameDisplay = pygame.display.set_mode((config.display_width, config.display_height))
@@ -85,10 +108,12 @@ height = len(tablero)
 width = len(tablero[1])
 tile_size = int(config.display_width / width)
 
+config.handImg = pygame.transform.scale(config.handImg, (int(config.display_width/width), int(config.display_height/height)))
+
 # generate a random position for the player and the food and place both in the 2d board
-player_pos = [randint(0, height-1), randint(0, width-1)]
+player_pos = [5, 5]
 puntuacion = 0
-tiles_pisables = [16, 18, 3, 35]
+turno = 0
 
 continue_playing = True
 while continue_playing:
@@ -101,12 +126,16 @@ while continue_playing:
 
     # UPDATE SCENE
     # según vuestras reglas, la puntuación cambiará o no
-
-    puntuacion += 2
+    if turno == 0:
+        puntuacion += 2
+        turno = 1
+    else:
+        turno = 0
 
     # DRAW SCENE
     dibuja_tablero()
     dibuja_jugador()
+
     mensaje = "La puntuación es: " + str(puntuacion)
     escribe_texto(mensaje, config.display_width//2, 100)
 
