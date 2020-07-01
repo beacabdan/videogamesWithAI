@@ -9,7 +9,7 @@ import random
 def carga_tablero():
     # instead of creating a board, we load it from a file
     tablero = []
-    with open('assets/mymap1.csv') as csvfile:
+    with open('assets/mymap.csv') as csvfile:
         counter = 0
         reader = csv.reader(csvfile)
         for row in reader:
@@ -23,18 +23,18 @@ def carga_tablero():
     # width and height of the 2D board
     width = len(tablero[0])
     height = len(tablero)
-    tile_size = int(config.display_width / width)
-
     # cargar el tile set (piezas del puzzle)
-    image = pygame.image.load(
-        'assets/tilesetOriginal.png')  # add .convert() at the end if you do not want to keep transparency
+    image = pygame.image.load('assets/tileset.png')  # add .convert() at the end if you do not want to keep transparency
     image_width, image_height = image.get_size()
+
+    tile_size = image_width/16  # cambiad este número dependieno
+
     tile_table = []
-    for tile_x in range(0, int(image_width / 8)):
+    for tile_x in range(0, int(image_width / tile_size)):
         line = []
         tile_table.append(line)
-        for tile_y in range(0, int(image_height / 8)):
-            rect = (tile_x * 8, tile_y * 8, 8, 8)
+        for tile_y in range(0, int(image_height / tile_size)):
+            rect = (tile_x * tile_size, tile_y * tile_size, tile_size, tile_size)
             line.append(image.subsurface(rect))
 
     return tablero, tile_table
@@ -47,19 +47,24 @@ def escribe_texto(texto, x, y, size = 20):
     gameDisplay.blit(TextSurf, TextRect)
 
 def dibuja_tablero():
+    width = len(tablero[0])
+    height = len(tablero)
+    tile_size_x = int(config.display_width / width)
+    tile_size_y = int(config.display_height / height)
+
     gameDisplay.fill(colours.darkgrey)
     for row in range(len(tablero)):
         for column in range(len(tablero[row])):
             tile_x = tablero[row][column] % 16
             tile_y = int(tablero[row][column] / 16)
-            tile = pygame.transform.scale(tile_table[tile_x][tile_y], (tile_size, tile_size))
-            gameDisplay.blit(tile, (column * tile_size, row * tile_size))
+            tile = pygame.transform.scale(tile_table[tile_x][tile_y], (tile_size_x, tile_size_y))
+            gameDisplay.blit(tile, (column * tile_size_x, row * tile_size_y))
 
 def dibuja_sprite(img, y, x):
     gameDisplay.blit(img, (config.display_width / width * x, config.display_height / height * y))  # pon un sprite en la posición xy
 
 def mueve_player():
-    steppable_tiles = [18, 16, 3, 35, 70, 92, 69]
+    steppable_tiles = [0, 1, 2]  # completadlo vosotros según vuestro tileset
 
     deltax = 0
     deltay = 0
@@ -75,7 +80,6 @@ def mueve_player():
 
     x = player_pos[0]
     y = player_pos[1]
-    print(player_pos, "antes", tablero[x][y])
 
     try:
         if tablero[x + deltax][y + deltay] in steppable_tiles:
@@ -97,18 +101,19 @@ def muestra_logo_y_nombre():
 
 
 pygame.init()
-gameDisplay = pygame.display.set_mode((config.display_width, config.display_height))
 
 tablero, tile_table = carga_tablero()
 height = len(tablero)
 width = len(tablero[1])
-tile_size = int(config.display_width / width)
+
+config.display_height = int(config.display_width/width * height)
+
+gameDisplay = pygame.display.set_mode((config.display_width, config.display_height))
 
 jugador = tile_table[5][0]
 jugador = pygame.transform.scale(jugador, (int(config.display_width/width), int(config.display_height/height)))
 
-# generate a random position for the player and the food and place both in the 2d board
-player_pos = [5, 5]
+player_pos = [0, 0]  # generate a position for the player
 puntuacion = 0
 turno = 0
 
@@ -133,8 +138,8 @@ while continue_playing:
     dibuja_tablero()
     dibuja_sprite(jugador, player_pos[0], player_pos[1])
 
-    mensaje = "La puntuación es: " + str(puntuacion)
-    escribe_texto(mensaje, config.display_width//2, 100)
+    mensaje = "Puntuación: " + str(puntuacion)
+    escribe_texto(mensaje, config.display_width //2, config.display_height - 15)
 
     # UPDATE DISPLAY AND INCREASE TIME
     pygame.display.update()
