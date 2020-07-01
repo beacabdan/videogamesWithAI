@@ -55,12 +55,8 @@ def dibuja_tablero():
             tile = pygame.transform.scale(tile_table[tile_x][tile_y], (tile_size, tile_size))
             gameDisplay.blit(tile, (column * tile_size, row * tile_size))
 
-
-
-def dibuja_jugador():
-    gameDisplay.blit(config.handImg, (config.display_width / width * player_pos[1],
-                                      config.display_height / height * player_pos[
-                                          0]))  # pon un sprite en la posición del jugador
+def dibuja_sprite(img, y, x):
+    gameDisplay.blit(img, (config.display_width / width * x, config.display_height / height * y))  # pon un sprite en la posición xy
 
 def mueve_player():
     steppable_tiles = [18, 16, 3, 35, 70, 92, 69]
@@ -108,7 +104,8 @@ height = len(tablero)
 width = len(tablero[1])
 tile_size = int(config.display_width / width)
 
-config.handImg = pygame.transform.scale(config.handImg, (int(config.display_width/width), int(config.display_height/height)))
+jugador = tile_table[5][0]
+jugador = pygame.transform.scale(jugador, (int(config.display_width/width), int(config.display_height/height)))
 
 # generate a random position for the player and the food and place both in the 2d board
 player_pos = [5, 5]
@@ -134,7 +131,7 @@ while continue_playing:
 
     # DRAW SCENE
     dibuja_tablero()
-    dibuja_jugador()
+    dibuja_sprite(jugador, player_pos[0], player_pos[1])
 
     mensaje = "La puntuación es: " + str(puntuacion)
     escribe_texto(mensaje, config.display_width//2, 100)
