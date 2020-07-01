@@ -61,7 +61,7 @@ def dibuja_tablero():
             gameDisplay.blit(tile, (column * tile_size_x, row * tile_size_y))
 
 def dibuja_sprite(img, y, x):
-    gameDisplay.blit(img, (config.display_width / width * x, config.display_height / height * y))  # pon un sprite en la posición xy
+    gameDisplay.blit(img, (config.display_width / grid_width * x, config.display_height / grid_height * y))  # pon un sprite en la posición xy
 
 def mueve_player():
     steppable_tiles = [0, 1, 2]  # completadlo vosotros según vuestro tileset
@@ -88,6 +88,9 @@ def mueve_player():
     except:
         return
 
+    player_pos[0] = max(0, min(player_pos[0], grid_height - 1))  # nos aseguramos de que esté dentro del rango (vert)
+    player_pos[1] = max(0, min(player_pos[1], grid_width - 1))  # nos aseguramos de que esté dentro del rango (horz)
+
 def ia_algo():
     print("Hola")
 
@@ -103,15 +106,15 @@ def muestra_logo_y_nombre():
 pygame.init()
 
 tablero, tile_table = carga_tablero()
-height = len(tablero)
-width = len(tablero[1])
+grid_height = len(tablero)
+grid_width = len(tablero[1])
 
-config.display_height = int(config.display_width/width * height)
+config.display_height = int(config.display_width / grid_width * grid_height)
 
 gameDisplay = pygame.display.set_mode((config.display_width, config.display_height))
 
 jugador = tile_table[5][0]
-jugador = pygame.transform.scale(jugador, (int(config.display_width/width), int(config.display_height/height)))
+jugador = pygame.transform.scale(jugador, (int(config.display_width / grid_width), int(config.display_height / grid_height)))
 
 player_pos = [0, 0]  # generate a position for the player
 puntuacion = 0
