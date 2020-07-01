@@ -39,6 +39,20 @@ def carga_tablero(mapacsv, tileset):
 
     return tablero, tile_table
 
+def carga_info():
+    tablero = []
+    with open('assets/mymapCharsMap.csv') as csvfile:
+        counter = 0
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if counter > 0:  # skip first line
+                nrow = []
+                for val in row:
+                    nrow.append(int(val))
+                tablero.append(nrow)
+            counter += 1
+    return tablero
+
 def escribe_texto(texto, x, y, size = 20):
     largeText = pygame.font.Font('freesansbold.ttf', size)
     TextSurf = largeText.render(texto, True, colours.white)
@@ -105,12 +119,12 @@ def muestra_logo_y_nombre():
 
 pygame.init()
 
-tablero, tile_table = carga_tablero('assets/mymap.csv', 'assets/tileset.png')
+tablero, tile_table = carga_tablero('assets/mymapCharsMap.csv', 'assets/tilesetChars.png')
+info = carga_info()
+
 grid_height = len(tablero)
 grid_width = len(tablero[1])
-
 config.display_height = int(config.display_width / grid_width * grid_height)
-
 gameDisplay = pygame.display.set_mode((config.display_width, config.display_height))
 
 jugador = tile_table[5][0]
@@ -130,12 +144,6 @@ while continue_playing:
             mueve_player()
 
     # UPDATE SCENE
-    # según vuestras reglas, la puntuación cambiará o no
-    if turno == 0:
-        puntuacion += 2
-        turno = 1
-    else:
-        turno = 0
 
     # DRAW SCENE
     dibuja_tablero()
