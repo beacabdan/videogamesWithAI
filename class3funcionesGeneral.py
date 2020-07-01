@@ -40,7 +40,7 @@ def carga_tablero():
     return tablero, tile_table
 
 def escribe_texto(texto, x, y, size = 20):
-    largeText = pygame.font.Font('assets/Roboto-Regular.ttf', size)
+    largeText = pygame.font.Font('freesansbold.ttf', size)
     TextSurf = largeText.render(texto, True, colours.white)
     TextRect = TextSurf.get_rect()
     TextRect.center = (x, y)
