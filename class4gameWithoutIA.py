@@ -6,6 +6,7 @@ import colours
 import math
 import random
 
+
 def carga_tablero(mapacsv, tileset):
     # instead of creating a board, we load it from a file
     tablero = []
@@ -27,7 +28,7 @@ def carga_tablero(mapacsv, tileset):
     image = pygame.image.load(tileset)  # add .convert() at the end if you do not want to keep transparency
     image_width, image_height = image.get_size()
 
-    tile_size = image_width/16  # cambiad este número dependieno
+    tile_size = image_width//16  # cambiad este número dependieno
 
     tile_table = []
     for tile_x in range(0, int(image_width / tile_size)):
@@ -39,9 +40,10 @@ def carga_tablero(mapacsv, tileset):
 
     return tablero, tile_table
 
-def carga_info():
+
+def carga_info(infomap):
     tablero = []
-    with open('assets/mymapCharsMap.csv') as csvfile:
+    with open(infomap) as csvfile:
         counter = 0
         reader = csv.reader(csvfile)
         for row in reader:
@@ -53,6 +55,7 @@ def carga_info():
             counter += 1
     return tablero
 
+
 def escribe_texto(texto, x, y, size = 20):
     largeText = pygame.font.Font('freesansbold.ttf', size)
     TextSurf = largeText.render(texto, True, colours.white)
@@ -60,11 +63,20 @@ def escribe_texto(texto, x, y, size = 20):
     TextRect.center = (x, y)
     gameDisplay.blit(TextSurf, TextRect)
 
-def dibuja_tablero():
+
+def dibuja_tablero(zoom = 1):
     width = len(tablero[0])
     height = len(tablero)
     tile_size_x = int(config.display_width / width)
     tile_size_y = int(config.display_height / height)
+
+    tile_size_x *= zoom
+    tile_size_y *= zoom
+    delayx = 0
+    delayy = 0
+    if zoom != 1:
+        delayx = config.display_width//2 - player_pos[1]*tile_size_x
+        delayy = config.display_height//2 - player_pos[0]*tile_size_y
 
     gameDisplay.fill(colours.darkgrey)
     for row in range(len(tablero)):
@@ -72,10 +84,16 @@ def dibuja_tablero():
             tile_x = tablero[row][column] % 16
             tile_y = int(tablero[row][column] / 16)
             tile = pygame.transform.scale(tile_table[tile_x][tile_y], (tile_size_x, tile_size_y))
-            gameDisplay.blit(tile, (column * tile_size_x, row * tile_size_y))
+            gameDisplay.blit(tile, (column * tile_size_x + delayx, row * tile_size_y + delayy))
 
-def dibuja_sprite(img, y, x):
-    gameDisplay.blit(img, (config.display_width / grid_width * x, config.display_height / grid_height * y))  # pon un sprite en la posición xy
+
+def dibuja_sprite(img, y, x, zoom = 1):
+    img = pygame.transform.scale(img, (int(config.display_width / grid_width * zoom), int(config.display_height / grid_height * zoom)))
+    if zoom == 1:
+        gameDisplay.blit(img, (int(config.display_width / grid_width * x) * zoom,
+                               int(config.display_height / grid_height * y) * zoom))  # pon un sprite en la posición xy
+    else:
+        gameDisplay.blit(img, (config.display_width //2, config.display_height //2 ))  # pon un sprite en la posición xy
 
 def mueve_player():
     steppable_tiles = [0, 1, 2]  # completadlo vosotros según vuestro tileset
@@ -105,14 +123,18 @@ def mueve_player():
     player_pos[0] = max(0, min(player_pos[0], grid_height - 1))  # nos aseguramos de que esté dentro del rango (vert)
     player_pos[1] = max(0, min(player_pos[1], grid_width - 1))  # nos aseguramos de que esté dentro del rango (horz)
 
+
 def ia_algo():
     print("Hola")
+
 
 def recoge_espada():
     print("Hace algo con la espada")
 
+
 def muestra_logo_y_nombre():
     return None
+
 
 """PROGRAMA"""
 
@@ -120,19 +142,20 @@ def muestra_logo_y_nombre():
 pygame.init()
 
 tablero, tile_table = carga_tablero('assets/mymapCharsMap.csv', 'assets/tilesetChars.png')
-info = carga_info()
+info = carga_info('assets/mymapChars.csv')
 
 grid_height = len(tablero)
 grid_width = len(tablero[1])
 config.display_height = int(config.display_width / grid_width * grid_height)
 gameDisplay = pygame.display.set_mode((config.display_width, config.display_height))
 
-jugador = tile_table[5][0]
+jugador = tile_table[1][0]
 jugador = pygame.transform.scale(jugador, (int(config.display_width / grid_width), int(config.display_height / grid_height)))
 
 player_pos = [0, 0]  # generate a position for the player
 puntuacion = 0
 turno = 0
+zoom = 1
 
 continue_playing = True
 while continue_playing:
@@ -144,10 +167,15 @@ while continue_playing:
             mueve_player()
 
     # UPDATE SCENE
+    if pygame.time.get_ticks() % 2000 == 0:
+        if zoom == 1:
+            zoom = 2
+        else:
+            zoom = 1
 
     # DRAW SCENE
-    dibuja_tablero()
-    dibuja_sprite(jugador, player_pos[0], player_pos[1])
+    dibuja_tablero(zoom)
+    dibuja_sprite(jugador, player_pos[0], player_pos[1], zoom)
 
     mensaje = "Puntuación: " + str(puntuacion)
     escribe_texto(mensaje, config.display_width //2, config.display_height - 15)

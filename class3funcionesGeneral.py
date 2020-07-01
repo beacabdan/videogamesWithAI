@@ -27,7 +27,7 @@ def carga_tablero(mapacsv, tileset):
     image = pygame.image.load(tileset)  # add .convert() at the end if you do not want to keep transparency
     image_width, image_height = image.get_size()
 
-    tile_size = image_width/16  # cambiad este número dependieno
+    tile_size = image_width//16  # cambiad este número dependieno
 
     tile_table = []
     for tile_x in range(0, int(image_width / tile_size)):
@@ -38,6 +38,20 @@ def carga_tablero(mapacsv, tileset):
             line.append(image.subsurface(rect))
 
     return tablero, tile_table
+
+def carga_info():
+    tablero = []
+    with open('assets/mymapCharsMap.csv') as csvfile:
+        counter = 0
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if counter > 0:  # skip first line
+                nrow = []
+                for val in row:
+                    nrow.append(int(val))
+                tablero.append(nrow)
+            counter += 1
+    return tablero
 
 def escribe_texto(texto, x, y, size = 20):
     largeText = pygame.font.Font('freesansbold.ttf', size)
@@ -61,7 +75,7 @@ def dibuja_tablero():
             gameDisplay.blit(tile, (column * tile_size_x, row * tile_size_y))
 
 def dibuja_sprite(img, y, x):
-    gameDisplay.blit(img, (config.display_width / grid_width * x, config.display_height / grid_height * y))  # pon un sprite en la posición xy
+    gameDisplay.blit(img, (int(config.display_width / grid_width * x), int(config.display_height / grid_height * y)))  # pon un sprite en la posición xy
 
 def mueve_player():
     steppable_tiles = [0, 1, 2]  # completadlo vosotros según vuestro tileset
